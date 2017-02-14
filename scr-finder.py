@@ -35,6 +35,9 @@ def split_colon_separated_ips(ipstring):
 
 if __name__ == '__main__':
 
+    print("Please enter name of output file (without .xlsx): ")
+    filename = input()
+
     print ("PHASE 1: Loading Excel Workbook %s" % FILENAME)
     wb = openpyxl.load_workbook(FILENAME)
     sheet = wb.get_sheet_by_name('TSSPM Report')
