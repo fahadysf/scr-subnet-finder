@@ -2,7 +2,6 @@ import openpyxl
 import ipaddress
 import sys
 
-
 FILENAME = 'full.xlsx'
 FULL_ANALYSIS = True
 
@@ -156,4 +155,6 @@ if __name__ == '__main__':
 
         row+= 1
     print('\n----OPERATION COMPLETED----\n')
-    outxlsx.save('output.xlsx')
+    print("Please enter name of output file (without .xlsx): ")
+    filename = input()
+    outxlsx.save( filename + '.xlsx')
