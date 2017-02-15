@@ -158,6 +158,5 @@ if __name__ == '__main__':
 
         row+= 1
     print('\n----OPERATION COMPLETED----\n')
-    print("Please enter name of output file (without .xlsx): ")
-    filename = input()
-    outxlsx.save( filename + '.xlsx')
+
+    outxlsx.save(filename + '.xlsx')
