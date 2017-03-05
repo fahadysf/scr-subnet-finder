@@ -36,7 +36,7 @@ def split_colon_separated_ips(ipstring):
 if __name__ == '__main__':
 
     print("Please enter name of output file (without .xlsx): ")
-    filename = input()
+    filename = 'test'
 
     print ("PHASE 1: Loading Excel Workbook %s" % FILENAME)
     wb = openpyxl.load_workbook(FILENAME)
@@ -69,7 +69,6 @@ if __name__ == '__main__':
         matched_networks = set()
         matched_ips_in_nar = set()
         nar = sheet.cell(row=row, column=1).value
-        sys.stdout.write('\rProcessing %s --- %d/%d NARS MATCHED/TESTED' % (nar, matched, row-2) )
         sources = []
         destinations = []
         for col in range(53,62):
@@ -92,6 +91,11 @@ if __name__ == '__main__':
         for dst in destinations:
             if ';' in dst:
                 expanded_dsts += split_colon_separated_ips(dst)
+                for i, edst in enumerate(expanded_dsts):
+                    if '-' in edst:
+                        expanded_edsts = expand_range(dst)
+                        expanded_dsts.remove(edst)
+                        expanded_dsts += expanded_edsts
             elif '-' in dst:
                 expanded_dsts += expand_range(dst)
             elif dst!='*':
@@ -155,8 +159,7 @@ if __name__ == '__main__':
             outsheet.cell(row=matched+2, column=7).value = sheet.cell(row=row, column=16).value
             outsheet.cell(row=matched+2, column=8).value = str(matched_networks)
             outsheet.cell(row=matched+2, column=9).value = str(matched_ips_in_nar)
-
+        sys.stdout.write('\rProcessing %s --- %d/%d NARS MATCHED/TESTED' % (nar, matched, row - 2))
         row+= 1
     print('\n----OPERATION COMPLETED----\n')
-
     outxlsx.save(filename + '.xlsx')
