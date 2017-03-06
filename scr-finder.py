@@ -33,11 +33,27 @@ def split_colon_separated_ips(ipstring):
                 final_list.append(item)
         return final_list
 
+def expand_ip_list(iplist):
+    expanded_iplist = list()
+    for entry in iplist:
+        if ';' in entry:
+            expanded_iplist += split_colon_separated_ips(entry)
+            for i, e_entry in enumerate(expanded_iplist):
+                if '-' in e_entry:
+                    expanded_e_entries = expand_range(entry)
+                    expanded_iplist.remove(e_entry)
+                    expanded_iplist += expanded_e_entries
+        elif '-' in entry:
+            expanded_iplist += expand_range(entry)
+        elif entry != '*':
+            expanded_iplist.append(entry)
+    return expanded_iplist
+
 if __name__ == '__main__':
-
-    print("Please enter name of output file (without .xlsx): ")
-    filename = 'test'
-
+    filename = ""
+    while filename == "":
+        print("Please enter name of output file (without .xlsx): ")
+        filename = input()
     print ("PHASE 1: Loading Excel Workbook %s" % FILENAME)
     wb = openpyxl.load_workbook(FILENAME)
     sheet = wb.get_sheet_by_name('TSSPM Report')
@@ -87,27 +103,8 @@ if __name__ == '__main__':
                     sources += (value.split(','))
         #Expand ranges and multi-ip definitions
         destinations =  list(set(destinations))
-        expanded_dsts = list()
-        for dst in destinations:
-            if ';' in dst:
-                expanded_dsts += split_colon_separated_ips(dst)
-                for i, edst in enumerate(expanded_dsts):
-                    if '-' in edst:
-                        expanded_edsts = expand_range(dst)
-                        expanded_dsts.remove(edst)
-                        expanded_dsts += expanded_edsts
-            elif '-' in dst:
-                expanded_dsts += expand_range(dst)
-            elif dst!='*':
-                expanded_dsts.append(dst)
-        expanded_srcs = list()
-        for src in sources:
-            if ';' in src:
-                expanded_srcs += split_colon_separated_ips(src)
-            elif '-' in src:
-                expanded_srcs += expand_range(src)
-            elif src!='*':
-                expanded_srcs.append(src)
+        expanded_dsts = expand_ip_list(destinations)
+        expanded_srcs = expand_ip_list(sources)
         nar_dict[nar] = [expanded_srcs, expanded_dsts, len(expanded_srcs), len(expanded_dsts)]
         r2 = 1
         flag = False
