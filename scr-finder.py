@@ -21,6 +21,8 @@ def is_ip_range(teststr):
 def split_colon_separated_ips(ipstring):
     if ';' in ipstring:
         splits = ipstring.split(';')
+        if '' in splits:
+            splits.remove('')
         ip_start = '.'.join(splits[0].split('.')[0:3])
         for i in range(1,len(splits)):
             splits[i] = ip_start +'.'+splits[i]
